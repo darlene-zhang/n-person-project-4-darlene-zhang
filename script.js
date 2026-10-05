@@ -6,8 +6,8 @@
 // ============================================
 
 // TODO: Select all navigation links
-// Hint: Use querySelectorAll with the class '.nav-link'
-const navLinks = null; // Replace null with your selector
+// Select all navigation links
+const navLinks = document.querySelectorAll('.nav-link'); // Replace null with your selector
 
 // TODO: Add click event listeners to each nav link
 // Hint: Use forEach to loop through navLinks
@@ -20,7 +20,44 @@ const navLinks = null; // Replace null with your selector
 // BONUS: Update active nav link on scroll
 // TODO: Add scroll event listener to window
 // Hint: As user scrolls, highlight the nav link for the current section
+// Add smooth scroll to each nav link
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default jump
 
+        // Get the target section ID from href
+        const targetId = link.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+
+        // Smooth scroll to target
+        targetSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
+});
+// Update active nav link on scroll
+window.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('section');
+    const scrollPos = window.scrollY + 100;
+
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+
+        if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+            // Remove active from all links
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            // Add active to current section's link
+            const activeLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    });
+});
 
 // ============================================
 // PART 2: PROJECT FILTERING (20 min)
@@ -28,11 +65,12 @@ const navLinks = null; // Replace null with your selector
 
 // TODO: Select all filter buttons
 // Hint: Use querySelectorAll with the class '.filter-btn'
-const filterButtons = null; // Replace null with your selector
+// Select filter buttons and project cards
+const filterButtons = document.querySelectorAll('.filter-btn'); // Replace null with your selector
 
 // TODO: Select all project cards
 // Hint: Use querySelectorAll with the class '.project-card'
-const projectCards = null; // Replace null with your selector
+const projectCards = document.querySelectorAll('.project-card'); // Replace null with your selector
 
 // TODO: Add click event listeners to filter buttons
 // For each button:
@@ -46,7 +84,20 @@ const projectCards = null; // Replace null with your selector
 //   6. Use style.display to show ('block') or hide ('none') cards
 
 // Hint: To get a data attribute, use element.dataset.filter or element.getAttribute('data-filter')
+// Add event listeners to filter buttons
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => btn.classList.remove('active'));
 
+        // Add active class to clicked button
+        button.classList.add('active');
+
+        // Get filter value and filter projects
+        const filterValue = button.getAttribute('data-filter');
+        filterProjects(filterValue);
+    });
+});
 
 // ============================================
 // PART 3: MOBILE MENU TOGGLE (10 min)
@@ -54,11 +105,12 @@ const projectCards = null; // Replace null with your selector
 
 // TODO: Select the mobile menu toggle button
 // Hint: Use querySelector with the class '.nav-toggle'
-const navToggle = null; // Replace null with your selector
+// Select mobile menu elements
+const navToggle = document.querySelector('.nav-toggle');// Replace null with your selector
 
 // TODO: Select the navigation menu
 // Hint: Use querySelector with the class '.nav-menu'
-const navMenu = null; // Replace null with your selector
+const navMenu = document.querySelector('.nav-menu'); // Replace null with your selector
 
 // TODO: Add click event listener to toggle button
 // When clicked:
@@ -67,7 +119,19 @@ const navMenu = null; // Replace null with your selector
 
 // BONUS: Close menu when a nav link is clicked
 // TODO: Add click listeners to nav links to close the mobile menu
+// Toggle mobile menu
+navToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    navToggle.classList.toggle('active');
+});
 
+// Close menu when nav link is clicked
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        navToggle.classList.remove('active');
+    });
+});
 
 // ============================================
 // PART 4: SKILL ANIMATIONS (15 min)
@@ -75,7 +139,8 @@ const navMenu = null; // Replace null with your selector
 
 // TODO: Select all skill progress bars
 // Hint: Use querySelectorAll with the class '.skill-progress'
-const skillBars = null; // Replace null with your selector
+// Select all skill progress bars
+const skillBars = document.querySelectorAll('.skill-progress'); // Replace null with your selector
 
 // TODO: Create a function to animate skills when they come into view
 // Hint: Add a scroll event listener
@@ -83,7 +148,25 @@ const skillBars = null; // Replace null with your selector
 //   1. For each skill bar, animate its width from 0 to the --skill-level value
 //   2. Use the style property to set the width
 //   3. Add a CSS transition for smooth animation
+// Animate skills on scroll
+function animateSkills() {
+    const skillsSection = document.querySelector('#skills');
+    const skillsPosition = skillsSection.getBoundingClientRect().top;
+    const screenPosition = window.innerHeight;
 
+    if (skillsPosition < screenPosition) {
+        skillBars.forEach(bar => {
+            const skillLevel = bar.style.getPropertyValue('--skill-level');
+            bar.style.width = skillLevel;
+        });
+    }
+}
+
+// Add scroll listener
+window.addEventListener('scroll', animateSkills);
+
+// Run once on load in case skills are already visible
+animateSkills();
 // Advanced: Use Intersection Observer for better performance (optional)
 
 
@@ -93,12 +176,13 @@ const skillBars = null; // Replace null with your selector
 
 // TODO: Select the contact form
 // Hint: Use querySelector with the id '#contact-form'
-const contactForm = null; // Replace null with your selector
+// Select form and inputs
+const contactForm = document.querySelector('#contact-form'); // Replace null with your selector
 
 // TODO: Select form inputs
-const nameInput = null; // querySelector for #name
-const emailInput = null; // querySelector for #email
-const messageInput = null; // querySelector for #message
+const nameInput = document.querySelector('#name'); // querySelector for #name
+const emailInput = document.querySelector('#email'); // querySelector for #email
+const messageInput = document.querySelector('#message'); // querySelector for #message
 
 // TODO: Create validation functions
 
@@ -106,7 +190,8 @@ const messageInput = null; // querySelector for #message
 function isValidEmail(email) {
     // Hint: Use a simple regex or check for @ and .
     // Example: return email.includes('@') && email.includes('.');
-    return false; // Replace with actual validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email); // Replace with actual validation
 }
 
 // Function to show error message
@@ -117,6 +202,19 @@ function showError(input, message) {
     // 3. Add a class 'error-message' for styling
     // 4. Append it after the input field
     // Hint: Use createElement, classList.add, and appendChild
+    clearError(input);
+
+    // Create error element
+    const error = document.createElement('span');
+    error.className = 'error-message';
+    error.textContent = message;
+
+    // Add error class to input
+    input.classList.add('error');
+    input.classList.remove('success');
+
+    // Append error after input
+    input.parentElement.appendChild(error);
 }
 
 // Function to clear error message
@@ -125,6 +223,17 @@ function clearError(input) {
     // 1. Find the error message element (next sibling)
     // 2. Remove it from the DOM
     // Hint: Use querySelector or nextElementSibling and remove()
+    const error = input.parentElement.querySelector('.error-message');
+    if (error) {
+        error.remove();
+    }
+    input.classList.remove('error');
+}
+// Show success state
+function showSuccess(input) {
+    clearError(input);
+    input.classList.add('success');
+    input.classList.remove('error');
 }
 
 // TODO: Add 'input' event listeners for real-time validation
@@ -150,7 +259,75 @@ function clearError(input) {
 //   4. If invalid:
 //      - Show error messages
 //      - Don't submit
+// Validate name input
+nameInput.addEventListener('input', () => {
+    if (nameInput.value.trim().length < 2) {
+        showError(nameInput, 'Name must be at least 2 characters');
+    } else {
+        showSuccess(nameInput);
+    }
+});
 
+// Validate email input
+emailInput.addEventListener('input', () => {
+    if (!isValidEmail(emailInput.value)) {
+        showError(emailInput, 'Please enter a valid email address');
+    } else {
+        showSuccess(emailInput);
+    }
+});
+
+// Validate message input
+messageInput.addEventListener('input', () => {
+    if (messageInput.value.trim().length < 10) {
+        showError(messageInput, 'Message must be at least 10 characters');
+    } else {
+        showSuccess(messageInput);
+    }
+});
+
+// Handle form submission
+contactForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // Prevent actual submission
+
+    // Validate all fields
+    let isValid = true;
+
+    if (nameInput.value.trim().length < 2) {
+        showError(nameInput, 'Name must be at least 2 characters');
+        isValid = false;
+    }
+
+    if (!isValidEmail(emailInput.value)) {
+        showError(emailInput, 'Please enter a valid email address');
+        isValid = false;
+    }
+
+    if (messageInput.value.trim().length < 10) {
+        showError(messageInput, 'Message must be at least 10 characters');
+        isValid = false;
+    }
+
+    // If valid, show success
+    if (isValid) {
+        // Create success message
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success-message';
+        successMsg.textContent = 'Thank you! Your message has been sent successfully.';
+
+        // Append after form
+        contactForm.appendChild(successMsg);
+
+        // Clear form after 2 seconds
+        setTimeout(() => {
+            contactForm.reset();
+            successMsg.remove();
+            document.querySelectorAll('.success').forEach(input => {
+                input.classList.remove('success');
+            });
+        }, 3000);
+    }
+});
 
 // ============================================
 // EXTENSION ACTIVITIES (after Parts 1 to 5)
